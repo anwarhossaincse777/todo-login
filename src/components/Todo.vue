@@ -1,0 +1,120 @@
+<script setup>
+
+import {useTodoList} from "@/stores/todoStore";
+import {storeToRefs} from "pinia";
+import {ref} from "vue";
+
+const TodoItems=ref('');
+
+
+const todo=useTodoList();
+
+
+
+const {ListItems} = storeToRefs(todo);
+
+
+function addTask(){
+todo.addItems(TodoItems.value);
+
+}
+
+
+function changeStatus(id){
+todo.changeStatus(id);
+}
+
+function changeStatusUnread(id){
+todo.changeStatusUnread(id);
+}
+
+function deleteItem(id){
+  todo.deleteItem(id)
+}
+
+
+
+
+</script>
+<template>
+  <section
+    class="bg-[#00DCBD] h-screen flex flex-col justify-center items-center">
+    <h1 class="text-center text-3xl italic">To-do list</h1>
+    <div class="h-1 w-20 mx-auto bg-white mt-1"></div>
+    <div
+      class="p-10 mt-5 rounded bg-white w-1/2 flex flex-col justify-center items-center"
+    >
+      <div
+        class="h-40 w-full bg-cover bg-no-repeat bg-center"
+        style="background-image: url('../assets/Copy\ of\ header.jpg')"
+      ></div>
+
+      <div class="mt-5 mb-3 border border-[#00DCBD] rounded bg-white">
+        <input
+          class="w-[350px] focus:outline-none rounded py-2 px-3"
+          id="taskInput"
+          type="text"
+          placeholder="Add your task ..."
+          v-model="TodoItems"
+        />
+        <button class="p-2 bg-green-100 rounded text-sm italic" type="button" id="addTaskBtn" @click.prevent="addTask()">
+          Add
+        </button>
+      </div>
+
+      <div class="">
+        <table class="text-center text-sm text-gray-500">
+          <thead class="text-xs  border-b">
+            <tr>
+              <th scope="col" class="px-6 py-3">Serial No</th>
+              <th scope="col" class="px-6 py-3">Task Name</th>
+              <th scope="col" class="px-6 py-3">Date</th>
+              <th scope="col" class="px-6 py-3">Status</th>
+              <th scope="col" class="px-6 py-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="" v-for="(item,index) in ListItems" :key="item.id">
+              <th class="px-6 py-4">{{index+1}}</th>
+              <td class="px-6 py-4">{{item.list}}</td>
+              <td class="px-6 py-4">{{item.date}}</td>
+
+              <template v-if="item.status===0">
+                <td class="px-6 py-4" @click="changeStatus(item.id)">
+                  <input type="checkbox" name=""  id="" /> <span class="text-red-600">unread</span>
+                </td>
+              </template>
+
+
+            <template v-if="item.status===1">
+
+              <td class="px-6 py-4" @click="changeStatusUnread(item.id)" >
+                <input type="checkbox" checked name=""  id="" /> <span class="text-green-800">read</span>
+              </td>
+            </template>
+
+              <td class="px-6 py-4" @click="deleteItem(item.id)">
+                <a href="javascript:void(0)"
+                  ><svg
+                    xmlns=" http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    />
+                  </svg>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</template>
