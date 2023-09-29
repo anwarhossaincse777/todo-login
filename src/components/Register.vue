@@ -1,15 +1,16 @@
 <script setup>
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import {useAuth} from "@/stores/auth";
 import router from "@/router";
 
 
 const registerForm=reactive({
-  newUsername:'' ,
+  newUserEmail:'' ,
   newPassword :'',
   conformPassword:''
 })
 
+let msg=ref('');
 
 // Register
 
@@ -32,6 +33,26 @@ function submitRegisterFrom() {
 
 }
 
+// email validation
+
+
+
+function validateEmail(email) {
+  if (!/^[^@]+@\w+(\.\w+)+\w$/.test(email)) {
+
+    msg.value = 'Please enter a valid email address';
+
+  } else {
+    msg.value = '';
+  }
+}
+
+
+
+
+
+
+
 </script>
 
 <template>
@@ -47,19 +68,21 @@ function submitRegisterFrom() {
           <div class="mb-4 w-80">
             <label
                 class="block text-gray-700 text-sm font-bold mb-2"
-                for="Username"
+                for="UserEmail"
                 required
             >
-              Username
+              Email
             </label>
             <input
-                v-model="registerForm.newUsername"
+                v-model="registerForm.newUserEmail"
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="Username"
+                id="UserEmail"
                 type="text"
-                placeholder="Username"
+                placeholder="Email"
                 required
+                @blur="validateEmail(registerForm.newUserEmail)"
             />
+            <span class="text-black">{{msg}}</span>
           </div>
           <div class="mb-4 w-80">
             <label
@@ -96,7 +119,7 @@ function submitRegisterFrom() {
             />
           </div>
           <div class="flex items-center justify-between">
-            <button
+            <button v-if="msg?'':'disabled'"
                 class="bg-[#00DCBD] hover:bg-[#00DCBD] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
             >

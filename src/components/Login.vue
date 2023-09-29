@@ -1,23 +1,23 @@
 <script setup>
-import Todo from "./Todo.vue";
 import {reactive, ref} from "vue";
 import {useAuth} from "@/stores/auth";
 import router from "@/router";
 
 const loginForm=reactive({
-  username:'' ,
+  userEmail:'' ,
   password :'',
 })
 
-
+let msg=ref('');
 
 
 const auth=useAuth();
 
 function submitFrom() {
   const success= auth.login(loginForm);
+  console.log(success);
   if (success){
-        if (success.newUsername===loginForm.username && success.newPassword===loginForm.password){
+        if (success.newUserEmail===loginForm.userEmail && success.newPassword===loginForm.password){
           alert("login");
           router.push({ name: 'dashboard'});
           auth.isLoggedIn=true;
@@ -30,6 +30,26 @@ function submitFrom() {
 
 
 }
+
+
+
+
+function validateEmail(email) {
+  if (!/^[^@]+@\w+(\.\w+)+\w$/.test(email)) {
+
+    msg.value = 'Please enter a valid email address';
+
+  } else {
+    msg.value = '';
+  }
+}
+
+
+
+
+
+
+
 
 </script>
 
@@ -48,18 +68,21 @@ function submitFrom() {
             <label
                 class="block text-gray-700 text-sm font-bold mb-2"
                 required
-                for="username"
+                for="userEmail"
             >
-              Username
+              Email
             </label>
             <input
-                v-model="loginForm.username"
+                v-model="loginForm.userEmail"
                 required
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="username"
-                type="text"
-                placeholder="Username"
+                id="userEmail"
+                type="email"
+                placeholder="Email"
+                @blur="validateEmail(loginForm.newUserEmail)"
             />
+            <span class="text-black">{{msg}}</span>
+
           </div>
           <div class="mb-6 w-80">
             <label
@@ -79,7 +102,7 @@ function submitFrom() {
             />
           </div>
           <div class="flex items-center justify-between">
-            <button
+            <button v-if="msg?'':'disabled'"
                 class="bg-[#00DCBD] hover:bg-[#20665d] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
             >
