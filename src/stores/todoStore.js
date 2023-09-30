@@ -21,7 +21,8 @@ export const useTodoList = defineStore('todo', {
     actions: {
 
         addItems(list) {
-            this.ListItems.push({ list, date:  new Date().toLocaleString(), status: this.status, id: this.id++})
+           const done= this.ListItems.push({ list, date:  new Date().toLocaleString(), status: this.status, id: this.id++})
+            return done;
         },
 
         changeStatus(getId) {
@@ -45,11 +46,12 @@ export const useTodoList = defineStore('todo', {
         deleteItem(getId) {
             const findId=this.ListItems.find((obj) => obj.id === getId);
             if (findId){
-                alert("Are Your Sure To delete");
-                this.ListItems= this.ListItems.filter((object) => {
+               const success= this.ListItems= this.ListItems.filter((object) => {
                     return object.id !== getId;
                 });
-            }else {
+                return success;
+            }
+            else {
                 alert("something went wrong");
             }
 

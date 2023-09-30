@@ -2,6 +2,7 @@
 import {reactive, ref} from "vue";
 import {useAuth} from "@/stores/auth";
 import router from "@/router";
+import {ElMessage, ElNotification} from "element-plus";
 
 const loginForm=reactive({
   userEmail:'' ,
@@ -15,17 +16,30 @@ const auth=useAuth();
 
 function submitFrom() {
   const success= auth.login(loginForm);
-  console.log(success);
   if (success){
         if (success.newUserEmail===loginForm.userEmail && success.newPassword===loginForm.password){
-          alert("login");
+
           router.push({ name: 'dashboard'});
           auth.isLoggedIn=true;
+
+          ElNotification({
+            title: 'Success',
+            message: 'You have Successfully Logged In',
+            type: 'success',
+            position: 'top-right',
+            duration:2000,
+          })
         }else {
-          alert("No record match");
+          ElMessage({
+            type: 'error',
+            message: `No record Match with this ${loginForm.userEmail} & Password ` ,
+          })
         }
   }else {
-    alert("not success")
+    ElMessage({
+      type: 'error',
+      message: "Something went wrong" ,
+    })
   }
 
 
@@ -79,9 +93,9 @@ function validateEmail(email) {
                 id="userEmail"
                 type="email"
                 placeholder="Email"
-                @blur="validateEmail(loginForm.newUserEmail)"
+                @blur="validateEmail(loginForm.userEmail)"
             />
-            <span class="text-black">{{msg}}</span>
+            <span class="text-red-600" >{{msg}}</span>
 
           </div>
           <div class="mb-6 w-80">

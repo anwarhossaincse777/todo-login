@@ -3,6 +3,7 @@
 import {useTodoList} from "@/stores/todoStore";
 import {storeToRefs} from "pinia";
 import {ref} from "vue";
+import {ElMessage, ElMessageBox, ElNotification} from "element-plus";
 
 const TodoItems=ref('');
 
@@ -15,24 +16,85 @@ const {ListItems} = storeToRefs(todo);
 
 
 function addTask(){
-todo.addItems(TodoItems.value);
+const success=todo.addItems(TodoItems.value);
+if (success){
+  TodoItems.value = null
+  ElNotification({
+    title: 'Success',
+    message: 'Successfully Add Task',
+    type: 'success',
+    position: 'top-right',
+    duration:2000,
+  })
+}else {
+
+
+}
 
 }
 
 
 function changeStatus(id){
 todo.changeStatus(id);
+  ElNotification({
+    title: 'Success',
+    message: 'Successfully Read the Task',
+    type: 'success',
+    position: 'top-right',
+    duration:2000,
+  })
 }
 
 function changeStatusUnread(id){
 todo.changeStatusUnread(id);
+  ElNotification({
+    title: 'Warning',
+    message: 'Successfully URead the Task',
+    type: 'warning',
+    position: 'top-right',
+    duration:2000,
+  })
 }
+
+
+const dialogVisible = ref(false)
+
 
 function deleteItem(id){
-  todo.deleteItem(id)
+  ElMessageBox.confirm('Are you sure to Delete This item', 'Warning',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+        draggable: true,
+      })
+
+      .then(() => {
+        const success=todo.deleteItem(id);
+        if (success){
+          ElMessage({
+            title: 'Success',
+            message: 'Delete completed',
+            type: 'success',
+          })
+
+        }else {
+
+          ElNotification({
+            title: 'Error',
+            message: 'Something went Wrong',
+            type: 'error',
+          })
+        }
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: 'Delete canceled',
+        })
+      })
+
 }
-
-
 
 
 </script>
@@ -41,14 +103,7 @@ function deleteItem(id){
     class="bg-[#00DCBD] h-screen flex flex-col justify-center items-center">
     <h1 class="text-center text-3xl italic">To-do list</h1>
     <div class="h-1 w-20 mx-auto bg-white mt-1"></div>
-    <div
-      class="p-10 mt-5 rounded bg-white w-1/2 flex flex-col justify-center items-center"
-    >
-      <div
-        class="h-40 w-full bg-cover bg-no-repeat bg-center"
-        style="background-image: url('../assets/Copy\ of\ header.jpg')"
-      ></div>
-
+    <div class="p-10 mt-5 rounded bg-white w-1/2 flex flex-col justify-center items-center">
       <div class="mt-5 mb-3 border border-[#00DCBD] rounded bg-white">
         <input
           class="w-[350px] focus:outline-none rounded py-2 px-3"
@@ -92,7 +147,6 @@ function deleteItem(id){
                 <input type="checkbox" checked name=""  id="" /> <span class="text-green-800">read</span>
               </td>
             </template>
-
               <td class="px-6 py-4" @click="deleteItem(item.id)">
                 <a href="javascript:void(0)"
                   ><svg
@@ -117,4 +171,12 @@ function deleteItem(id){
       </div>
     </div>
   </section>
+
 </template>
+
+<style scoped>
+.dialog-footer button:first-child {
+  margin-right: 10px;
+}
+
+</style>

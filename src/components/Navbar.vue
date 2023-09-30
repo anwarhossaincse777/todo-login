@@ -1,14 +1,25 @@
 <script setup>
 import router from "@/router";
 import {useAuth} from "@/stores/auth.js";
+import {ElMessage, ElNotification} from "element-plus";
 
 const auth=useAuth();
 function logOut(){
  const success= auth.logout();
  if (success){
    router.push({name:'login'})
+   ElNotification({
+     title: 'Success',
+     message: 'You have Successfully Logged Out',
+     type: 'success',
+     position: 'top-right',
+     duration:2000,
+   })
  }else {
-   alert("something went wrong");
+   ElMessage({
+     type: 'error',
+     message: "Something went wrong" ,
+   })
  }
 }
 </script>

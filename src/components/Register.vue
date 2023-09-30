@@ -2,6 +2,7 @@
 import {reactive, ref} from "vue";
 import {useAuth} from "@/stores/auth";
 import router from "@/router";
+import {ElMessage, ElNotification} from "element-plus";
 
 
 const registerForm=reactive({
@@ -11,6 +12,7 @@ const registerForm=reactive({
 })
 
 let msg=ref('');
+let pasMsg=ref('');
 
 // Register
 
@@ -20,14 +22,27 @@ const auth=useAuth();
 function submitRegisterFrom() {
   // Perform password matching validation
   if (registerForm.newPassword !== registerForm.conformPassword) {
-    alert("Passwords do not match. Please try again.");
+    ElMessage({
+      type: 'error',
+      message: 'Passwords do not match. Please try again.',
+      position: 'top-right',
+    })
   } else {
     const success=auth.register(registerForm);
     if (success){
-      alert("Register Complete Successfully");
       router.push({ name: 'dashboard'});
+      ElNotification({
+        title: 'Success',
+        message: 'Congratulations !! You have successfully Complete Your registration',
+        type: 'success',
+        position: 'top-right',
+        duration:2000,
+      })
     }else {
-      alert("Something Went wrong");
+      ElMessage({
+        type: 'info',
+        message: 'Something went wrong',
+      })
     }
   }
 
@@ -44,6 +59,14 @@ function validateEmail(email) {
 
   } else {
     msg.value = '';
+  }
+}
+
+function validatePassword(confirmPassword) {
+  if (registerForm.newPassword!==confirmPassword) {
+    pasMsg.value = 'Password & Confirm Password Do not match';
+  } else {
+    pasMsg.value = '';
   }
 }
 
@@ -82,7 +105,7 @@ function validateEmail(email) {
                 required
                 @blur="validateEmail(registerForm.newUserEmail)"
             />
-            <span class="text-black">{{msg}}</span>
+            <span class="text-red-600">{{msg}}</span>
           </div>
           <div class="mb-4 w-80">
             <label
@@ -116,7 +139,9 @@ function validateEmail(email) {
                 id="conformPassword"
                 type="password"
                 placeholder="******************"
+                @blur="validatePassword(registerForm.conformPassword)"
             />
+            <span class="text-red-600">{{pasMsg}}</span>
           </div>
           <div class="flex items-center justify-between">
             <button v-if="msg?'':'disabled'"

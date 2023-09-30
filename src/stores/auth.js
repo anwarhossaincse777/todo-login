@@ -35,10 +35,9 @@ export const useAuth = defineStore('auth', {
 
 
         logout(){
-            const out=this.user={};
+            const out=this.user;
             this.isLoggedIn=false;
             return out;
-
         }
 
           }
